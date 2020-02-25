@@ -1,15 +1,11 @@
-package com.fit2cloud.sdk.util;
+package com.fit2cloud.metal.sdk.util;
 
-import com.fit2cloud.pm.model.PmIp;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.net.util.SubnetUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -52,26 +48,6 @@ public class IpUtil {
             ipe = t;
         }
         return ips <= ipt && ipt <= ipe;
-    }
-
-    public static PmIp getConnectableIp(List<PmIp> ips) {
-        if (CollectionUtils.isEmpty(ips)) {
-            return null;
-        }
-        //打乱列表顺序
-        Collections.shuffle(ips);
-        for (PmIp ip : ips) {
-            try {
-                //返回不可达的IP
-                if (!InetAddress.getByName(ip.getIp()).isReachable(TIME_OUT)) {
-                    return ip;
-                }
-            } catch (IOException ignore) {
-                //忽略异常
-            }
-        }
-
-        return null;
     }
 
     static Pattern pattern = Pattern

@@ -1,4 +1,4 @@
-package com.fit2cloud.sdk.util;
+package com.fit2cloud.metal.sdk.util;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;

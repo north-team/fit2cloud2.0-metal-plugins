@@ -1,4 +1,4 @@
-package com.fit2cloud.sdk.model;
+package com.fit2cloud.metal.sdk.model;
 
 public class IPMIRequest {
     private String userName;

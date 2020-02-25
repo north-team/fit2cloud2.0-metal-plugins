@@ -1,15 +1,21 @@
-package com.fit2cloud.sdk.model;
+package com.fit2cloud.metal.sdk.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
 
-public class F2CCpu implements Serializable {
+public class F2CMemory implements Serializable {
     @ApiModelProperty("")
     private String id;
 
     @ApiModelProperty("物理机id")
     private String physicalMachineId;
+
+    @ApiModelProperty(" 磁盘类型")
+    private String type;
+
+    @ApiModelProperty("磁盘容量（GB）")
+    private String size;
 
     @ApiModelProperty("制造商")
     private String manufactor;
@@ -17,20 +23,11 @@ public class F2CCpu implements Serializable {
     @ApiModelProperty("插槽")
     private String slot;
 
-    @ApiModelProperty("主频")
+    @ApiModelProperty("频率")
     private String freq;
-
-    @ApiModelProperty("型号")
-    private String model;
 
     @ApiModelProperty("序列号")
     private String sn;
-
-    @ApiModelProperty("核心数")
-    private String core;
-
-    @ApiModelProperty("线程数/1个核心")
-    private String thread;
 
     @ApiModelProperty("同步时间")
     private Long syncTime;
@@ -49,6 +46,22 @@ public class F2CCpu implements Serializable {
 
     public void setPhysicalMachineId(String physicalMachineId) {
         this.physicalMachineId = physicalMachineId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
     }
 
     public String getManufactor() {
@@ -75,14 +88,6 @@ public class F2CCpu implements Serializable {
         this.freq = freq;
     }
 
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
     public String getSn() {
         return sn;
     }
@@ -97,21 +102,5 @@ public class F2CCpu implements Serializable {
 
     public void setSyncTime(Long syncTime) {
         this.syncTime = syncTime;
-    }
-
-    public String getCore() {
-        return core;
-    }
-
-    public void setCore(String core) {
-        this.core = core;
-    }
-
-    public String getThread() {
-        return thread;
-    }
-
-    public void setThread(String thread) {
-        this.thread = thread;
     }
 }

@@ -1,8 +1,8 @@
-package com.fit2cloud.sdk;
+package com.fit2cloud.metal.sdk;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fit2cloud.sdk.constants.InitMethod;
-import com.fit2cloud.sdk.model.MachineEntity;
+import com.fit2cloud.metal.sdk.constants.InitMethod;
+import com.fit2cloud.metal.sdk.model.MachineEntity;
 
 import java.util.List;
 

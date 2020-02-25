@@ -1,4 +1,4 @@
-package com.fit2cloud.sdk.constants;
+package com.fit2cloud.metal.sdk.constants;
 
 public class F2CDiskStatus {
 	public static final String IN_USE = "in_use";

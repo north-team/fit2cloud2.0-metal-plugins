@@ -1,6 +1,6 @@
-package com.fit2cloud.sdk;
+package com.fit2cloud.metal.sdk;
 
-import com.fit2cloud.sdk.constants.F2CResourceType;
+import com.fit2cloud.metal.sdk.constants.F2CResourceType;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

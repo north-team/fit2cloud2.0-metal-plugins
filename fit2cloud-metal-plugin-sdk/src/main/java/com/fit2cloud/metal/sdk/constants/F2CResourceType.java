@@ -1,4 +1,4 @@
-package com.fit2cloud.sdk.constants;
+package com.fit2cloud.metal.sdk.constants;
 
 public class F2CResourceType {
 	public static final String VM = "vm";

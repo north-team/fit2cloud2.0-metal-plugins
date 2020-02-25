@@ -1,4 +1,4 @@
-package com.fit2cloud.sdk.constants;
+package com.fit2cloud.metal.sdk.constants;
 
 public class F2CPricePolicy {
 	public static final String INSTANCE_TYPE = "instanceType";

@@ -1,11 +1,11 @@
 package com.fit2cloud.inspur;
 
 import com.alibaba.fastjson.JSONObject;
-import com.fit2cloud.sdk.AbstractMetalProvider;
-import com.fit2cloud.sdk.F2CMetalPlugin;
-import com.fit2cloud.sdk.MetalPluginException;
-import com.fit2cloud.sdk.constants.InitMethod;
-import com.fit2cloud.sdk.model.MachineEntity;
+import com.fit2cloud.metal.sdk.AbstractMetalProvider;
+import com.fit2cloud.metal.sdk.F2CMetalPlugin;
+import com.fit2cloud.metal.sdk.MetalPluginException;
+import com.fit2cloud.metal.sdk.constants.InitMethod;
+import com.fit2cloud.metal.sdk.model.MachineEntity;
 
 import java.util.Arrays;
 import java.util.List;

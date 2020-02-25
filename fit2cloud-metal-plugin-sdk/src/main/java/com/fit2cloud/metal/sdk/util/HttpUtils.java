@@ -1,4 +1,4 @@
-package com.fit2cloud.sdk.util;
+package com.fit2cloud.metal.sdk.util;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;

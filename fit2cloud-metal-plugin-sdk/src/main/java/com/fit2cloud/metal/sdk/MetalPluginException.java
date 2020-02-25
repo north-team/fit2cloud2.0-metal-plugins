@@ -1,4 +1,4 @@
-package com.fit2cloud.sdk;
+package com.fit2cloud.metal.sdk;
 
 public class MetalPluginException extends Exception {
 
