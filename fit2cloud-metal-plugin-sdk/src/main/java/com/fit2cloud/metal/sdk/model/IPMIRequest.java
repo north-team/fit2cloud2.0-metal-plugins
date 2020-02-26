@@ -5,7 +5,7 @@ public class IPMIRequest {
     private String password;
     private String ip;
 
-    public IPMIRequest(String userName, String password, String ip) {
+    public IPMIRequest(String ip, String userName, String password) {
         this.userName = userName;
         this.password = password;
         this.ip = ip;

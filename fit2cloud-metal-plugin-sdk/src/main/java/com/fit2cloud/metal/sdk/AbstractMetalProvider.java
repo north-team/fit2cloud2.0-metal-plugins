@@ -1,7 +1,11 @@
 package com.fit2cloud.metal.sdk;
 
 import com.fit2cloud.metal.sdk.constants.F2CResourceType;
+import com.fit2cloud.metal.sdk.model.IPMIRequest;
+import com.fit2cloud.metal.sdk.model.SNMPRequest;
+import com.fit2cloud.metal.sdk.util.IPMIUtil;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +26,18 @@ public abstract class AbstractMetalProvider implements IMetalProvider {
 
     public String getPageTemplate() throws MetalPluginException {
         return getPageTemplate(F2CResourceType.VM);
+    }
+
+    public void checkIPMIRequest(IPMIRequest request) throws MetalPluginException {
+        if (StringUtils.isAnyBlank(request.getIp(), request.getUserName(), request.getPassword())) {
+            throw new MetalPluginException("参数错误！");
+        }
+    }
+
+    public void checkSnmpRequest(SNMPRequest request) throws MetalPluginException {
+        if (StringUtils.isAnyBlank(request.getCommunity(), request.getIp())) {
+            throw new MetalPluginException("参数错误！");
+        }
     }
 
     public String getPageTemplate(String resourceType) throws MetalPluginException {
@@ -77,20 +93,38 @@ public abstract class AbstractMetalProvider implements IMetalProvider {
 
     @Override
     public boolean powerOn(String ipmiReqeuestStr) throws MetalPluginException {
-        //:todo
-        return false;
+        IPMIRequest request = gson.fromJson(ipmiReqeuestStr, IPMIRequest.class);
+        checkIPMIRequest(request);
+        try {
+            IPMIUtil.exeCommand(new IPMIUtil.Account(request.getIp(), request.getUserName(), request.getPassword()), "power on");
+        } catch (Exception e) {
+            throw new MetalPluginException(e);
+        }
+        return true;
     }
 
     @Override
     public boolean powerOff(String ipmiReqeuestStr) throws MetalPluginException {
-        //:todo
-        return false;
+        IPMIRequest request = gson.fromJson(ipmiReqeuestStr, IPMIRequest.class);
+        checkIPMIRequest(request);
+        try {
+            IPMIUtil.exeCommand(new IPMIUtil.Account(request.getIp(), request.getUserName(), request.getPassword()), "power off");
+        } catch (Exception e) {
+            throw new MetalPluginException(e);
+        }
+        return true;
     }
 
     @Override
     public boolean powerReset(String ipmiReqeuestStr) throws MetalPluginException {
-        //:todo
-        return false;
+        IPMIRequest request = gson.fromJson(ipmiReqeuestStr, IPMIRequest.class);
+        checkIPMIRequest(request);
+        try {
+            IPMIUtil.exeCommand(new IPMIUtil.Account(request.getIp(), request.getUserName(), request.getPassword()), "power reset");
+        } catch (Exception e) {
+            throw new MetalPluginException(e);
+        }
+        return true;
     }
 
     @Override

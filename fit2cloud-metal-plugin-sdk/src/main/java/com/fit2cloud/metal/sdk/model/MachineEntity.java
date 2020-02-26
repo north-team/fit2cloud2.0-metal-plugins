@@ -30,9 +30,27 @@ public class MachineEntity {
     //物理机序列号
     private String serialNo;
     private List<F2CPhysicalDisk> disks;
+    private List<F2CCpu> cpus;
+    private List<F2CMemory> memories;
     private List<F2CPmNetworkCard> pmNetworkCards;
 
     public MachineEntity() {
+    }
+
+    public List<F2CCpu> getCpus() {
+        return cpus;
+    }
+
+    public void setCpus(List<F2CCpu> cpus) {
+        this.cpus = cpus;
+    }
+
+    public List<F2CMemory> getMemories() {
+        return memories;
+    }
+
+    public void setMemories(List<F2CMemory> memories) {
+        this.memories = memories;
     }
 
     public List<F2CPmNetworkCard> getPmNetworkCards() {
