@@ -2,6 +2,7 @@ package com.fit2cloud.metal.sdk;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fit2cloud.metal.sdk.constants.InitMethod;
+import com.fit2cloud.metal.sdk.model.F2CMetrics;
 import com.fit2cloud.metal.sdk.model.MachineEntity;
 
 import java.util.List;
@@ -76,6 +77,11 @@ public interface IMetalProvider {
      * 重设ip
      **/
     boolean resetIp(String ipmiReqeuestStr) throws MetalPluginException;
+
+    /**
+     * 采集硬件监控数据
+     **/
+    F2CMetrics getMetrics(String ipmiReqeuestStr) throws MetalPluginException;
 
     /**
      * 自定义方法，不通用的逻辑请override这个方法

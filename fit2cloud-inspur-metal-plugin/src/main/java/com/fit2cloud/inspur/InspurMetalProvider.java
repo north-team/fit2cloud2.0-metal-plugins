@@ -5,10 +5,7 @@ import com.fit2cloud.metal.sdk.AbstractMetalProvider;
 import com.fit2cloud.metal.sdk.F2CMetalPlugin;
 import com.fit2cloud.metal.sdk.MetalPluginException;
 import com.fit2cloud.metal.sdk.constants.InitMethod;
-import com.fit2cloud.metal.sdk.model.F2CCpu;
-import com.fit2cloud.metal.sdk.model.F2CMemory;
-import com.fit2cloud.metal.sdk.model.IPMIRequest;
-import com.fit2cloud.metal.sdk.model.MachineEntity;
+import com.fit2cloud.metal.sdk.model.*;
 import com.fit2cloud.metal.sdk.util.HttpUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -44,7 +41,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
 
     @Override
     public List<InitMethod> getSupportedInitMethod(String request) throws MetalPluginException {
-        return Arrays.asList(InitMethod.ALLOCATE_IP, InitMethod.SET_PASSWORD, InitMethod.SET_HOSTNAME, InitMethod.ADD_DOMAIN);
+        return Arrays.asList(InitMethod.LOGIN, InitMethod.RESTAPI, InitMethod.LOGOUT, InitMethod.SNMP, InitMethod.IPMI);
     }
 
     @Override
@@ -177,7 +174,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
         if (headersMap.get(request.getIp()) == null) {
             return true;
         }
-        HttpUtils.post(String.format(logoutUrl, request.getIp()), null, headersMap.get(request.getIp()));
+        HttpUtils.get(String.format(logoutUrl, request.getIp()), headersMap.get(request.getIp()));
         headersMap.remove(request.getIp());
         return true;
     }
@@ -185,6 +182,11 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     @Override
     public boolean validateCredential(String credential) throws MetalPluginException {
         return login(credential);
+    }
+
+    @Override
+    public F2CMetrics getMetrics(String ipmiReqeuestStr) throws MetalPluginException {
+        return null;
     }
 
 
