@@ -1,9 +1,11 @@
 package com.fit2cloud.inspur;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fit2cloud.metal.sdk.AbstractMetalProvider;
 import com.fit2cloud.metal.sdk.F2CMetalPlugin;
 import com.fit2cloud.metal.sdk.MetalPluginException;
+import com.fit2cloud.metal.sdk.constants.F2CResourceType;
 import com.fit2cloud.metal.sdk.constants.InitMethod;
 import com.fit2cloud.metal.sdk.model.*;
 import com.fit2cloud.metal.sdk.util.HttpUtils;
@@ -128,13 +130,50 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     }
 
     @Override
-    public JSONObject getRaidPayload(String raidConfigDTO) throws MetalPluginException {
-        return null;
+    public JSONObject getRaidPayload(String raidConfigDTOStr) throws MetalPluginException {
+        F2CRaidConfigDTO raidConfigDTO = gson.fromJson(raidConfigDTOStr, F2CRaidConfigDTO.class);
+        JSONObject raidPayload = JSONObject.parseObject(getPageTemplate());
+        JSONObject createRaid = raidPayload.getJSONObject("options").getJSONObject("create-raid");
+        JSONArray raidList = new JSONArray();
+
+        for (F2CRaidConfigDTO.RaidConfig c : raidConfigDTO.getRaidConfigList()) {
+            JSONObject raidConfigObj = new JSONObject();
+            raidConfigObj.put("type", getValidRaidType(c.getRaid()));
+            raidConfigObj.put("drives", c.getDisks().stream().sorted(Comparator.comparingInt(F2CPhysicalDisk::getDrive)).map(d -> d.getEnclosureId() + " " + d.getDrive() + " ").reduce(" ", String::concat).trim());
+            raidList.add(raidConfigObj);
+        }
+        createRaid.put("raidList", raidList);
+        return raidPayload;
+    }
+
+    @Override
+    public JSONObject getDeletePayload() {
+        try {
+            return JSONObject.parseObject(getPageTemplate(F2CResourceType.RACKHD_RAID_DEL_PAYLOAD));
+        } catch (MetalPluginException e) {
+            e.printStackTrace();
+        }
+        return new JSONObject();
+    }
+
+    @Override
+    public String getRaidWorkFlow() {
+        return workflowPostUrl + "Graph.Raid.Create.AdaptecRAID";
+    }
+
+    @Override
+    public String getDeleteRaidWorkFlow() {
+        return workflowPostUrl + "Graph.Raid.Delete.AdaptecRAID";
+    }
+
+    @Override
+    public String getCatalogRaidWorkFlow() {
+        return workflowPostUrl + "Graph.Raid.Catalog.AdaptecRAID";
     }
 
     @Override
     public String getValidRaidType(String raidType) throws MetalPluginException {
-        return null;
+        return raidType.replace("raid", "");
     }
 
     @Override

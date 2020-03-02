@@ -34,6 +34,32 @@ public interface IMetalProvider {
     JSONObject getRaidPayload(String raidConfigDTO) throws MetalPluginException;
 
     /**
+     * 获取RackHD 擦除raid payload 一般都是全部擦除
+     */
+    JSONObject getDeletePayload();
+
+    /**
+     * 获取 RackHD 制作raid的workflow
+     *
+     * @return
+     */
+    String getRaidWorkFlow();
+
+    /**
+     * 获取 RackHD 删除raid的workflow
+     *
+     * @return
+     */
+    String getDeleteRaidWorkFlow();
+
+    /**
+     * 获取 RackHD 收集raid的workflow
+     *
+     * @return
+     */
+    String getCatalogRaidWorkFlow();
+
+    /**
      * 获取RackHD raid payload 合适的raidType
      */
     String getValidRaidType(String raidType) throws MetalPluginException;
@@ -87,4 +113,5 @@ public interface IMetalProvider {
      * 自定义方法，不通用的逻辑请override这个方法
      **/
     <T> T invokeCustomMethod(String methodName, Object... parameters) throws MetalPluginException;
+
 }

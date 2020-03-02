@@ -23,9 +23,11 @@ import java.util.jar.JarFile;
 public abstract class AbstractMetalProvider implements IMetalProvider {
     protected Logger log = LoggerFactory.getLogger(getClass());
     protected Gson gson = new Gson();
+    //RackHD api
+    protected String workflowPostUrl = "/api/2.0/nodes/%s/workflows?name=";
 
     public String getPageTemplate() throws MetalPluginException {
-        return getPageTemplate(F2CResourceType.VM);
+        return getPageTemplate(F2CResourceType.RACKHD_RAID_PAYLOAD);
     }
 
     public void checkIPMIRequest(IPMIRequest request) throws MetalPluginException {
@@ -44,8 +46,10 @@ public abstract class AbstractMetalProvider implements IMetalProvider {
         String pageFile = "launchConfigure.json";
         if (F2CResourceType.IP.equalsIgnoreCase(resourceType)) {
             pageFile = "ip.json";
-        } else if (F2CResourceType.DISK.equalsIgnoreCase(resourceType)) {
-            pageFile = "diskConfigure.json";
+        } else if (F2CResourceType.RACKHD_RAID_PAYLOAD.equalsIgnoreCase(resourceType)) {
+            pageFile = F2CResourceType.RACKHD_RAID_PAYLOAD;
+        } else if (F2CResourceType.RACKHD_RAID_DEL_PAYLOAD.equalsIgnoreCase(resourceType)) {
+            pageFile = F2CResourceType.RACKHD_RAID_DEL_PAYLOAD;
         }
         return readConfigFile(pageFile);
     }
