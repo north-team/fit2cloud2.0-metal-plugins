@@ -87,7 +87,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                         cCpu.setSlot(cpu.getString("CPUID"));
                         cCpu.setCore(cpu.getString("CoreNumber"));
                         cCpu.setManufactor(cpu.getString("Model").split(" ")[0]);
-                        cCpu.setFreq("Intel(R) Xeon(R) CPU E5-2609 v4 @ 1.70GHz".substring("Intel(R) Xeon(R) CPU E5-2609 v4 @ 1.70GHz".indexOf("@") + 1).replace(" ", "").replace("GHz", ""));
+                        cCpu.setFreq(cpu.getString("Model").substring(cpu.getString("Model").indexOf("@") + 1).replace(" ", "").replace("GHz", ""));
                         cCpus.add(cCpu);
                     }
                 }
@@ -227,6 +227,4 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     public F2CMetrics getMetrics(String ipmiReqeuestStr) throws MetalPluginException {
         return null;
     }
-
-
 }

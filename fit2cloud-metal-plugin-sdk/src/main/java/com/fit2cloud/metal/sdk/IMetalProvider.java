@@ -75,7 +75,7 @@ public interface IMetalProvider {
     boolean logout(String ipmiRequest) throws MetalPluginException;
 
     /**
-     * 验证云帐号是否有效
+     * 验证帐号是否有效
      **/
     boolean validateCredential(String credential) throws MetalPluginException;
 
