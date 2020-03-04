@@ -36,6 +36,14 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     private static final String overviewUrl = "http://%s/rpc/getfruinfo.asp";
     private static final String cpuUrl = "http://%s/rpc/getcpuinfo.asp";
     private static final String memoryUrl = "http://%s/rpc/getmeminfo.asp";
+    /**
+     * 板载网卡
+     */
+    private static final String nicUrl = "http://%s/rpc/getmacinfo.asp";
+    /**
+     * 外插网卡
+     */
+    private static final String pcieNicUrl = "http://%s/rpc/getpciemacinfo.asp";
 
     public String getName() {
         return name;
@@ -117,7 +125,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                 entity.setMemory(memories.stream().mapToLong(m -> Long.valueOf(m.getSize())).sum());
 
                 //:todo 增加网卡的读取
-
+                entity.setPmNetworkCards(getNetworkCards(request, header, bindings));
                 return entity;
 
             } catch (ScriptException e) {
@@ -227,4 +235,51 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     public F2CMetrics getMetrics(String ipmiReqeuestStr) throws MetalPluginException {
         return null;
     }
+
+    /**
+     * @Description 获取网卡信息
+     * @Author Jianneng
+     * @Date 2020/3/4
+     **/
+    private List<F2CPmNetworkCard> getNetworkCards(IPMIRequest request, Map header, Bindings bindings) {
+        List<F2CPmNetworkCard> networkCards = new LinkedList<>();
+        try {
+            //获取板载网卡
+            String nicResponse = HttpUtils.get(String.format(nicUrl, request.getIp()), header);
+            nicResponse = nicResponse.substring(nicResponse.indexOf("WEBVAR_JSONVAR"), nicResponse.indexOf("//Dynamic data end"));
+            engine.eval(nicResponse);
+            net.sf.json.JSONObject nicArr = net.sf.json.JSONObject.fromObject(((Map) bindings.get("WEBVAR_JSONVAR_GETMACINFO"))).getJSONObject("WEBVAR_STRUCTNAME_GETMACINFO");
+            Iterator nicIt = nicArr.keys();
+            while (nicIt.hasNext()) {
+                net.sf.json.JSONObject nic = nicArr.getJSONObject((String) nicIt.next());
+                if(nic.containsKey("MACADDRESS") && !"00:00:00:00:00:00".equals(nic.getString("MACADDRESS"))){
+                    F2CPmNetworkCard f2CPmNetworkCard = new F2CPmNetworkCard();
+                    f2CPmNetworkCard.setMac(nic.getString("MACADDRESS"));
+                    f2CPmNetworkCard.setIp(nic.getString("IPADDRESS"));
+                    f2CPmNetworkCard.setNumber(nic.getString("Index"));
+                    networkCards.add(f2CPmNetworkCard);
+                }
+            }
+            //获取外插网卡
+            String pcieNicResponse = HttpUtils.get(String.format(pcieNicUrl, request.getIp()), header);
+            pcieNicResponse = pcieNicResponse.substring(pcieNicResponse.indexOf("WEBVAR_JSONVAR"), pcieNicResponse.indexOf("//Dynamic data end"));
+            engine.eval(pcieNicResponse);
+            net.sf.json.JSONObject pcieNicArr = net.sf.json.JSONObject.fromObject(((Map) bindings.get("WEBVAR_JSONVAR_GETPCIEMACINFO"))).getJSONObject("WEBVAR_STRUCTNAME_GETPCIEMACINFO");
+            Iterator pcieNicIt = nicArr.keys();
+            while (nicIt.hasNext()) {
+                net.sf.json.JSONObject pcieNic = pcieNicArr.getJSONObject((String) pcieNicIt.next());
+                if(pcieNic.containsKey("MACADDRESS") && !"00:00:00:00:00:00".equals(pcieNic.getString("MACADDRESS"))){
+                    F2CPmNetworkCard f2CPmNetworkCard = new F2CPmNetworkCard();
+                    f2CPmNetworkCard.setMac(pcieNic.getString("MACADDRESS"));
+                    f2CPmNetworkCard.setIp(pcieNic.getString("IPADDRESS"));
+                    f2CPmNetworkCard.setNumber(pcieNic.getString("Index"));
+                    networkCards.add(f2CPmNetworkCard);
+                }
+            }
+        } catch (ScriptException e) {
+            logger.error("Failed to get network card:"+e.getMessage());
+        }
+        return networkCards;
+    }
+
 }
