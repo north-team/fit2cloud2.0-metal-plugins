@@ -1,13 +1,13 @@
-package com.fit2cloud.plugin.inspur;
+package com.fit2cloud.plugin.dell;
 
-import com.fit2cloud.inspur.InspurMetalProvider;
+import com.fit2cloud.dell.DellMetalProvider;
 import com.fit2cloud.metal.sdk.MetalPluginException;
 import com.fit2cloud.metal.sdk.model.IPMIRequest;
 import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InspurMetalProviderTest {
+public class DellMetalProviderTest {
     IPMIRequest request;
     Gson gson;
 
@@ -19,6 +19,6 @@ public class InspurMetalProviderTest {
 
     @Test
     public void testSpider() throws MetalPluginException {
-        System.out.println(gson.toJson(new InspurMetalProvider().getMachineEntity(gson.toJson(request))));
+        System.out.println(gson.toJson(new DellMetalProvider().getMachineEntity(gson.toJson(request))));
     }
 }

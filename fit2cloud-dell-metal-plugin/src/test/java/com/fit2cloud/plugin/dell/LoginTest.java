@@ -1,4 +1,4 @@
-package com.fit2cloud.plugin.inspur;
+package com.fit2cloud.plugin.dell;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;

@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @F2CMetalPlugin
-public class HPMetalProvider extends AbstractMetalProvider {
+public class HpMetalProvider extends AbstractMetalProvider {
     private static String name = "fit2cloud-dell-metal-plugin";
-    Logger logger = LoggerFactory.getLogger(HPMetalProvider.class);
+    Logger logger = LoggerFactory.getLogger(HpMetalProvider.class);
 
     private static final ConcurrentHashMap<String, Map<String, String>> headersMap = new ConcurrentHashMap();
 
