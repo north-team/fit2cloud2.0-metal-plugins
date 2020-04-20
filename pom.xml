@@ -11,6 +11,7 @@
         <module>fit2cloud-metal-plugin-sdk</module>
         <module>fit2cloud-inspur-metal-plugin</module>
         <module>fit2cloud-dell-metal-plugin</module>
+        <module>fit2cloud-hp-metal-plugin</module>
 
     </modules>
     <name>Fit2Cloud2.0 Metal Plugins</name>
