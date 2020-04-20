@@ -10,7 +10,7 @@ public class ExceptionDetailUtils {
      * @param e
      * @return
      */
-    public static String getStackTrace(Exception e) {
+    public static String getStackTrace(Throwable e) {
         if (e == null) {
             return "没有异常信息！";
         }
