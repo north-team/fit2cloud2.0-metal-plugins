@@ -29,7 +29,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     private static final ScriptEngineManager sem = new ScriptEngineManager();
     private static final ScriptEngine engine = sem.getEngineByName(JS_ENGINE_NAME);
 
-    private static final Map<String, Map<String, String>> headersMap = new ConcurrentHashMap();
+    private static final ConcurrentHashMap<String, Map<String, String>> headersMap = new ConcurrentHashMap();
 
     private static final String loginUrl = "http://%s/rpc/WEBSES/create.asp";
     private static final String logoutUrl = "http://%s/rpc/WEBSES/logout.asp";
@@ -124,7 +124,6 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                 entity.setMemories(memories);
                 entity.setMemory(memories.stream().mapToLong(m -> Long.valueOf(m.getSize())).sum());
 
-                //:todo 增加网卡的读取
                 entity.setPmNetworkCards(getNetworkCards(request, header, bindings));
                 return entity;
 
