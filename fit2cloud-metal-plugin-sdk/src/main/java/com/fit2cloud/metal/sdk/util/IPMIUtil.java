@@ -194,7 +194,6 @@ public class IPMIUtil {
 
     }
 
-
     public static JSONObject transform(String commandResult) {
         JSONObject re = new JSONObject();
         Arrays.asList(commandResult.split("\n")).forEach(r -> {
