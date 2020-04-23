@@ -89,7 +89,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                 Iterator cpuIt = cpuArr.keys();
                 while (cpuIt.hasNext()) {
                     net.sf.json.JSONObject cpu = cpuArr.getJSONObject((String) cpuIt.next());
-                    if (cpu.containsKey("Model")) {
+                    if (cpu.containsKey("Model") && StringUtils.isNoneBlank(cpu.getString("Model"))) {
                         F2CCpu cCpu = new F2CCpu();
                         cCpu.setProcName(cpu.getString("Model"));
                         cCpu.setProcSocket(cpu.getString("CPUID"));
@@ -124,11 +124,12 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                 entity.setMemory(memories.stream().mapToLong(m -> Long.valueOf(m.getMemModSize())).sum());
 
                 entity.setPmNetworkCards(getNetworkCards(request, header, bindings));
+                logout(ipmiSnmpRequestStr);
                 return entity;
 
             } catch (ScriptException e) {
                 logout(ipmiSnmpRequestStr);
-                e.printStackTrace();
+                logger.error("插件获取物理机信息失败");
             }
 
         }
