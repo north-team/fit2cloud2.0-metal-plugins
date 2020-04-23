@@ -91,16 +91,15 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                     net.sf.json.JSONObject cpu = cpuArr.getJSONObject((String) cpuIt.next());
                     if (cpu.containsKey("Model")) {
                         F2CCpu cCpu = new F2CCpu();
-                        cCpu.setModel(cpu.getString("Model"));
-                        cCpu.setSlot(cpu.getString("CPUID"));
-                        cCpu.setCore(cpu.getString("CoreNumber"));
-                        cCpu.setManufactor(cpu.getString("Model").split(" ")[0]);
-                        cCpu.setFreq(cpu.getString("Model").substring(cpu.getString("Model").indexOf("@") + 1).replace(" ", "").replace("GHz", ""));
+                        cCpu.setProcName(cpu.getString("Model"));
+                        cCpu.setProcSocket(cpu.getString("CPUID"));
+                        cCpu.setProcNumCores(cpu.getString("CoreNumber"));
+                        cCpu.setProcSpeed(cpu.getString("Model").substring(cpu.getString("Model").indexOf("@") + 1).replace(" ", "").replace("GHz", ""));
                         cCpus.add(cCpu);
                     }
                 }
                 entity.setCpus(cCpus);
-                entity.setCpu(cCpus.stream().mapToInt(c -> Integer.valueOf(c.getCore())).sum());
+                entity.setCpu(cCpus.size());
 
                 //memory
                 List<F2CMemory> memories = new LinkedList<>();
@@ -113,16 +112,16 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                     net.sf.json.JSONObject memory = memoryArr.getJSONObject((String) memoryIt.next());
                     if (memory.containsKey("Capacity") && memory.getInt("Present") == 1) {
                         F2CMemory memory1 = new F2CMemory();
-                        memory1.setSlot(memory.getString("MEMID"));
-                        memory1.setManufactor(memory.getString("Manufacture"));
-                        memory1.setSize(memory.getString("Capacity"));
-                        memory1.setFreq(memory.getString("Speed"));
+                        memory1.setMemModNum(memory.getString("MEMID"));
+//                        memory1.set(memory.getString("Manufacture"));
+                        memory1.setMemModSize(memory.getString("Capacity"));
+                        memory1.setMemModFrequency(memory.getString("Speed"));
                         memory1.setSn(memory.getString("SN"));
                         memories.add(memory1);
                     }
                 }
                 entity.setMemories(memories);
-                entity.setMemory(memories.stream().mapToLong(m -> Long.valueOf(m.getSize())).sum());
+                entity.setMemory(memories.stream().mapToLong(m -> Long.valueOf(m.getMemModSize())).sum());
 
                 entity.setPmNetworkCards(getNetworkCards(request, header, bindings));
                 return entity;
@@ -251,7 +250,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
             Iterator nicIt = nicArr.keys();
             while (nicIt.hasNext()) {
                 net.sf.json.JSONObject nic = nicArr.getJSONObject((String) nicIt.next());
-                if(nic.containsKey("MACADDRESS") && !"00:00:00:00:00:00".equals(nic.getString("MACADDRESS"))){
+                if (nic.containsKey("MACADDRESS") && !"00:00:00:00:00:00".equals(nic.getString("MACADDRESS"))) {
                     F2CPmNetworkCard f2CPmNetworkCard = new F2CPmNetworkCard();
                     f2CPmNetworkCard.setMac(nic.getString("MACADDRESS"));
                     f2CPmNetworkCard.setIp(nic.getString("IPADDRESS"));
@@ -267,7 +266,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
             Iterator pcieNicIt = nicArr.keys();
             while (nicIt.hasNext()) {
                 net.sf.json.JSONObject pcieNic = pcieNicArr.getJSONObject((String) pcieNicIt.next());
-                if(pcieNic.containsKey("MACADDRESS") && !"00:00:00:00:00:00".equals(pcieNic.getString("MACADDRESS"))){
+                if (pcieNic.containsKey("MACADDRESS") && !"00:00:00:00:00:00".equals(pcieNic.getString("MACADDRESS"))) {
                     F2CPmNetworkCard f2CPmNetworkCard = new F2CPmNetworkCard();
                     f2CPmNetworkCard.setMac(pcieNic.getString("MACADDRESS"));
                     f2CPmNetworkCard.setIp(pcieNic.getString("IPADDRESS"));
@@ -276,7 +275,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                 }
             }
         } catch (ScriptException e) {
-            logger.error("Failed to get network card:"+e.getMessage());
+            logger.error("Failed to get network card:" + e.getMessage());
         }
         return networkCards;
     }
