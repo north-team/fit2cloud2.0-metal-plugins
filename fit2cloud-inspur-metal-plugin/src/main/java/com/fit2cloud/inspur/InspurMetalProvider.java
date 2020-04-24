@@ -75,6 +75,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
                 net.sf.json.JSONObject overviewObj = net.sf.json.JSONObject.fromObject(((Map) bindings.get("WEBVAR_JSONVAR_HL_GETALLFRUINFO"))).getJSONObject("WEBVAR_STRUCTNAME_HL_GETALLFRUINFO").getJSONObject("0");
 
                 MachineEntity entity = new MachineEntity();
+                entity.setName("Inspur " + overviewObj.getString("BI_BoardPartNum"));
                 entity.setBmcIp(request.getIp());
                 entity.setBrand("Inspur");
                 entity.setModel(overviewObj.getString("BI_BoardPartNum"));
@@ -146,7 +147,7 @@ public class InspurMetalProvider extends AbstractMetalProvider {
         for (F2CRaidConfigDTO.RaidConfig c : raidConfigDTO.getRaidConfigList()) {
             JSONObject raidConfigObj = new JSONObject();
             raidConfigObj.put("type", getValidRaidType(c.getRaid()));
-            raidConfigObj.put("drives", c.getDisks().stream().sorted(Comparator.comparingInt(F2CPhysicalDisk::getDrive)).map(d -> d.getEnclosureId() + " " + d.getDrive() + " ").reduce(" ", String::concat).trim());
+            raidConfigObj.put("drives", c.getDisks().stream().sorted(Comparator.comparing(F2CPhysicalDisk::getDrive)).map(d -> d.getEnclosureId() + " " + d.getDrive() + " ").reduce(" ", String::concat).trim());
             raidList.add(raidConfigObj);
         }
         createRaid.put("raidList", raidList);
