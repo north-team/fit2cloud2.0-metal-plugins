@@ -5,12 +5,11 @@
     },
     "create-raid": {
       "createDefault": false,
-      "controller": 1,
-      "path": "/usr/Arcconf/arcconf",
+      "controller": 0,
       "raidList": [
         {
           "type": "5",
-          "drives": "0 0 0 1 0 2 0 3"
+          "drives": "1I:2:1,..."
         }
       ]
     }

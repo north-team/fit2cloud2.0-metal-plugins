@@ -227,11 +227,6 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     }
 
     @Override
-    public boolean validateCredential(String credential) throws MetalPluginException {
-        return login(credential);
-    }
-
-    @Override
     public F2CMetrics getMetrics(String ipmiReqeuestStr) throws MetalPluginException {
         return null;
     }

@@ -10,15 +10,17 @@ import org.junit.Test;
 public class DellMetalProviderTest {
     IPMIRequest request;
     Gson gson;
+    private DellMetalProvider iMetalProvider;
 
     @Before
     public void initArgs() {
-        request = new IPMIRequest("149.129.105.194:4000", "admin", "Fit2cloud@2019");
+        request = new IPMIRequest("r720.dahaia123.top", "root", "calvin");
         gson = new Gson();
+        iMetalProvider = new DellMetalProvider();
     }
 
     @Test
     public void testSpider() throws MetalPluginException {
-        System.out.println(gson.toJson(new DellMetalProvider().getMachineEntity(gson.toJson(request))));
+        System.out.println(gson.toJson(iMetalProvider.getMachineEntity(gson.toJson(request))));
     }
 }

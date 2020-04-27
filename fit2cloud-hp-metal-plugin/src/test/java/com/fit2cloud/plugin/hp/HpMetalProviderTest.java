@@ -7,18 +7,20 @@ import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InspurMetalProviderTest {
+public class HpMetalProviderTest {
     IPMIRequest request;
     Gson gson;
+    private HpMetalProvider iMetalProvider;
 
     @Before
     public void initArgs() {
-        request = new IPMIRequest("149.129.105.194:4000", "admin", "Fit2cloud@2019");
+        request = new IPMIRequest("dl3809.dahaia123.top", "administrator", "Fit2cloud@2019");
         gson = new Gson();
+        iMetalProvider = new HpMetalProvider();
     }
 
     @Test
     public void testSpider() throws MetalPluginException {
-        System.out.println(gson.toJson(new HpMetalProvider().getMachineEntity(gson.toJson(request))));
+        System.out.println(gson.toJson(iMetalProvider.getMachineEntity(gson.toJson(request))));
     }
 }

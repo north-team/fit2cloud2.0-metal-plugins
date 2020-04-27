@@ -44,7 +44,7 @@ public class DellMetalProvider extends AbstractMetalProvider {
         if (login(ipmiSnmpRequestStr)) {
             IPMIRequest request = gson.fromJson(ipmiSnmpRequestStr, IPMIRequest.class);
             Map header = headersMap.get(request.getIp());
-            //:todo https://home.dahaia123.top/ 账号密码: root/calvin 读取硬件信息 参考inspur
+            //:todo https://r720.dahaia123.top/ 账号密码: root/calvin 读取硬件信息 参考inspur
 
             try {
                 return null;
@@ -69,7 +69,7 @@ public class DellMetalProvider extends AbstractMetalProvider {
         for (F2CRaidConfigDTO.RaidConfig c : raidConfigDTO.getRaidConfigList()) {
             JSONObject raidConfigObj = new JSONObject();
             raidConfigObj.put("type", getValidRaidType(c.getRaid()));
-            raidConfigObj.put("drives", c.getDisks().stream().sorted(Comparator.comparingInt(F2CPhysicalDisk::getDrive)).map(d -> d.getEnclosureId() + " " + d.getDrive() + " ").reduce(" ", String::concat).trim());
+            raidConfigObj.put("drives", c.getDisks().stream().sorted(Comparator.comparing(F2CPhysicalDisk::getDrive)).map(d -> d.getEnclosureId() + " " + d.getDrive() + " ").reduce(" ", String::concat).trim());
             raidList.add(raidConfigObj);
         }
         createRaid.put("raidList", raidList);
@@ -131,11 +131,6 @@ public class DellMetalProvider extends AbstractMetalProvider {
         HttpUtils.get(String.format(logoutUrl, request.getIp()), headersMap.get(request.getIp()));
         headersMap.remove(request.getIp());
         return true;
-    }
-
-    @Override
-    public boolean validateCredential(String credential) throws MetalPluginException {
-        return login(credential);
     }
 
     @Override

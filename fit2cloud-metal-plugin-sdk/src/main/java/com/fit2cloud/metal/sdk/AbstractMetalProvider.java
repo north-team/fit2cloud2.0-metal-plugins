@@ -143,6 +143,15 @@ public abstract class AbstractMetalProvider implements IMetalProvider {
         return false;
     }
 
+    @Override
+    public boolean validateCredential(String credential) throws MetalPluginException {
+        if (login(credential)) {
+            logout(credential);
+            return true;
+        }
+        return false;
+    }
+
     public <T> T invokeCustomMethod(String methodName, Object... parameters) throws MetalPluginException {
         try {
             List<Class> paramsClass = new ArrayList<Class>();
