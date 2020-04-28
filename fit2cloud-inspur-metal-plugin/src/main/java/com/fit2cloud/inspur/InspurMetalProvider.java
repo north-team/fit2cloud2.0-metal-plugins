@@ -60,6 +60,11 @@ public class InspurMetalProvider extends AbstractMetalProvider {
     }
 
     @Override
+    public Map<String, String> getHeader(String ip) {
+        return headersMap.get(ip);
+    }
+
+    @Override
     public MachineEntity getMachineEntity(String ipmiSnmpRequestStr) throws MetalPluginException {
         if (login(ipmiSnmpRequestStr)) {
             IPMIRequest request = gson.fromJson(ipmiSnmpRequestStr, IPMIRequest.class);

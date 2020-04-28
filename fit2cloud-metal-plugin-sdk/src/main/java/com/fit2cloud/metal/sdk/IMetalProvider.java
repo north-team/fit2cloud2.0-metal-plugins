@@ -6,6 +6,7 @@ import com.fit2cloud.metal.sdk.model.F2CMetrics;
 import com.fit2cloud.metal.sdk.model.MachineEntity;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IMetalProvider {
     /**
@@ -22,6 +23,11 @@ public interface IMetalProvider {
      * 获取平台版本
      **/
     String getPlatformVersion(String request) throws MetalPluginException;
+
+    /**
+     * 获取某台机器对应的Cookie
+     **/
+    Map<String, String> getHeader(String ip);
 
     /**
      * 爬取硬件信息

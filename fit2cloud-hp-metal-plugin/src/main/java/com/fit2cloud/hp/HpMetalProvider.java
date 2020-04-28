@@ -54,6 +54,11 @@ public class HpMetalProvider extends AbstractMetalProvider {
     }
 
     @Override
+    public Map<String, String> getHeader(String ip) {
+        return headersMap.get(ip);
+    }
+
+    @Override
     public MachineEntity getMachineEntity(String ipmiSnmpRequestStr) throws MetalPluginException {
         IPMIRequest request = gson.fromJson(ipmiSnmpRequestStr, IPMIRequest.class);
         String ip = request.getIp();
@@ -183,7 +188,6 @@ public class HpMetalProvider extends AbstractMetalProvider {
     @Override
     public JSONObject getRaidPayload(String raidConfigDTOStr) throws MetalPluginException {
 
-        //:todo 装配成rackhd 能支持的格式 注意多raid阵列支持
         F2CRaidConfigDTO raidConfigDTO = gson.fromJson(raidConfigDTOStr, F2CRaidConfigDTO.class);
         JSONObject raidPayload = JSONObject.parseObject(getPageTemplate());
         JSONObject createRaid = raidPayload.getJSONObject("options").getJSONObject("create-raid");
@@ -268,7 +272,7 @@ public class HpMetalProvider extends AbstractMetalProvider {
         }
         JSONObject req = new JSONObject();
         req.put("method", "logout");
-        req.put("session_key", headersMap.get(request.getIp()));
+        req.put("session_key", headersMap.get(request.getIp()).get("Cookie").split("=")[1]);
         HttpUtils.post(String.format(String.format(loginUrl, request.getIp()), request.getIp()), req.toJSONString(), headersMap.get(request.getIp()));
         headersMap.remove(request.getIp());
         return true;
