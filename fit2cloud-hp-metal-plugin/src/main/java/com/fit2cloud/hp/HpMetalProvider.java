@@ -241,7 +241,6 @@ public class HpMetalProvider extends AbstractMetalProvider {
     public boolean login(String ipmiRequest) throws MetalPluginException {
         IPMIRequest request = gson.fromJson(ipmiRequest, IPMIRequest.class);
         checkIPMIRequest(request);
-        //:todo 登录该机型的http方法
         String ip = request.getIp();
         String userName = request.getUserName();
         String pwd = request.getPassword();
@@ -266,7 +265,6 @@ public class HpMetalProvider extends AbstractMetalProvider {
     @Override
     public boolean logout(String ipmiRequest) throws MetalPluginException {
         IPMIRequest request = gson.fromJson(ipmiRequest, IPMIRequest.class);
-        //:todo 登出该机型的http方法
         if (headersMap.get(request.getIp()) == null) {
             return true;
         }
