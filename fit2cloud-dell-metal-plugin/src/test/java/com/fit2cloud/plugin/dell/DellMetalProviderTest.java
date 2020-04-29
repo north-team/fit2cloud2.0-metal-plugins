@@ -26,7 +26,8 @@ public class DellMetalProviderTest {
 
     @Test
     public void testLoginOut() throws MetalPluginException {
-        String rst = gson.toJson(iMetalProvider.login(gson.toJson(request)));
-        System.out.println(rst);
+        String loginRst = gson.toJson(iMetalProvider.login(gson.toJson(request)));
+        String logoutRst = gson.toJson(iMetalProvider.logout(gson.toJson(request)));
+        System.out.println("结束");
     }
 }

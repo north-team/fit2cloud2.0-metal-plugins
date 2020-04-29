@@ -114,7 +114,7 @@ public class HttpUtils {
             //获得Cookies
             String httpSessionCookie = null;
             List<Cookie> cookies = cookieStore.getCookies();
-            if(null != cookies){
+            if(null != cookies && null != headersMap){
                 for (int i = 0; i < cookies.size(); i++) {
                     if (cookies.get(i).getName().equals("-http-session-")) {
                         httpSessionCookie = cookies.get(i).getValue();

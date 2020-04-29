@@ -22,6 +22,7 @@ public class DellMetalProvider extends AbstractMetalProvider {
 
     //web控制台 Http接口
     private static final String loginUrl = "https://%s/data/login";
+    private static final String logoutUrl = "https://%s/data/logout";
 
     private static final ConcurrentHashMap<String, Map<String, String>> headersMap = new ConcurrentHashMap();
 
@@ -137,6 +138,7 @@ public class DellMetalProvider extends AbstractMetalProvider {
                     Map<String, String> cookieMap = headersMap.get("login");
                     if(null != cookieMap){
                         headersMap.put(ip, cookieMap);
+                        headersMap.remove("login");
                         return true;
                     }
                 }else {
@@ -155,12 +157,14 @@ public class DellMetalProvider extends AbstractMetalProvider {
     public boolean logout(String ipmiRequest) throws MetalPluginException {
         IPMIRequest request = gson.fromJson(ipmiRequest, IPMIRequest.class);
         checkIPMIRequest(request);
-        //:todo 登出该机型的http方法
         if (headersMap.get(request.getIp()) == null) {
             return true;
         }
-        String logoutUrl = null;
-        HttpUtils.get(String.format(logoutUrl, request.getIp()), headersMap.get(request.getIp()));
+        Map headers = new HashMap<String, String>();
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        headers.putAll(headersMap.get(request.getIp()));// 原登录用户 cookie
+
+        HttpUtils.post(String.format(logoutUrl, request.getIp()), null, headers);
         headersMap.remove(request.getIp());
         return true;
     }
