@@ -8,20 +8,20 @@ import com.fit2cloud.metal.sdk.MetalPluginException;
 import com.fit2cloud.metal.sdk.constants.F2CResourceType;
 import com.fit2cloud.metal.sdk.constants.InitMethod;
 import com.fit2cloud.metal.sdk.model.*;
+import com.fit2cloud.metal.sdk.util.DataFormatUtil;
 import com.fit2cloud.metal.sdk.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @F2CMetalPlugin
 public class DellMetalProvider extends AbstractMetalProvider {
     private static String name = "fit2cloud-dell-metal-plugin";
     Logger logger = LoggerFactory.getLogger(DellMetalProvider.class);
+
+    //web控制台 Http接口
+    private static final String loginUrl = "https://%s/data/login";
 
     private static final ConcurrentHashMap<String, Map<String, String>> headersMap = new ConcurrentHashMap();
 
@@ -120,7 +120,34 @@ public class DellMetalProvider extends AbstractMetalProvider {
     public boolean login(String ipmiRequest) throws MetalPluginException {
         IPMIRequest request = gson.fromJson(ipmiRequest, IPMIRequest.class);
         checkIPMIRequest(request);
-        //:todo 登录该机型的http方法
+        //登录该机型的http方法
+        String ip = request.getIp();
+        String userName = request.getUserName();
+        String pwd = request.getPassword();
+        if (headersMap.get(ip) == null) {
+            String payload = String.format("user=%s&password=%s", userName, pwd);
+            Map headers = new HashMap<String, String>();
+            headers.put("Content-Type", "application/x-www-form-urlencoded");
+            String rst = HttpUtils.post(String.format(loginUrl, ip), payload, headers, headersMap);
+            try {
+                // String 类型的 xml 数据转 json
+                JSONObject jsonObject = JSONObject.parseObject(DataFormatUtil.XmlToJson(rst)).getJSONObject("root");
+                if(jsonObject.getInteger("authResult") == 0){ //登录成功 authResult 才为 0
+                    // 取出请求成功后的 cookie
+                    Map<String, String> cookieMap = headersMap.get("login");
+                    if(null != cookieMap){
+                        headersMap.put(ip, cookieMap);
+                        return true;
+                    }
+                }else {
+                    logger.error("登录 Dell ip：%s,账号：%s，密码：%s失败！返回结果：%s", request.getIp(), request.getUserName(), request.getPassword(), rst);
+                    return false;
+                }
+            }catch (Exception e) {
+                logger.error("登录 Dell ip：%s,账号：%s，密码：%s失败！返回结果：%s", request.getIp(), request.getUserName(), request.getPassword(), e);
+                throw new MetalPluginException(e);
+            }
+        }
         return false;
     }
 

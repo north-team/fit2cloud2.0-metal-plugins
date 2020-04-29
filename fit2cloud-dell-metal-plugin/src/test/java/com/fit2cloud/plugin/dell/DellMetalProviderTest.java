@@ -23,4 +23,10 @@ public class DellMetalProviderTest {
     public void testSpider() throws MetalPluginException {
         System.out.println(gson.toJson(iMetalProvider.getMachineEntity(gson.toJson(request))));
     }
+
+    @Test
+    public void testLoginOut() throws MetalPluginException {
+        String rst = gson.toJson(iMetalProvider.login(gson.toJson(request)));
+        System.out.println(rst);
+    }
 }
