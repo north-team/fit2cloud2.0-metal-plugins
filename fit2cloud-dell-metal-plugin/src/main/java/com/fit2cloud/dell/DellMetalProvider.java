@@ -10,6 +10,8 @@ import com.fit2cloud.metal.sdk.constants.InitMethod;
 import com.fit2cloud.metal.sdk.constants.PluginConstants;
 import com.fit2cloud.metal.sdk.model.*;
 import com.fit2cloud.metal.sdk.util.DataFormatUtil;
+import com.fit2cloud.metal.sdk.util.DiskUtil;
+import com.fit2cloud.metal.sdk.util.ExceptionDetailUtils;
 import com.fit2cloud.metal.sdk.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +30,10 @@ public class DellMetalProvider extends AbstractMetalProvider {
     private static final String overViewUrl = "https://%s/data?get="; //请求硬件数据的通用前缀
     private static final String cpuUrl = "https://%s/sysmgmt/2012/server/processor"; //获取 cpu
     private static final String cacheUrl = "https://%s/sysmgmt/2012/server/cache?processor="; //获取当前插槽 cpu 各级缓存大小
+    private static final String memoryUrl = "https://%s/sysmgmt/2012/server/memory"; //获取内存
+    //private static final String nicUrl = "https://%s/data?get=ndcmac"; //获取网卡信息,也可与 overViewUrl 拼接
+    private static final String vdiskUrl = "https://%s/sysmgmt/2010/storage/vdisk"; //获取虚拟磁盘
+    private static final String pdiskUrl = "https://%s/sysmgmt/2010/storage/pdisk"; //获取物理磁盘
 
     private static final ConcurrentHashMap<String, Map<String, String>> headersMap = new ConcurrentHashMap();
 
@@ -60,8 +66,8 @@ public class DellMetalProvider extends AbstractMetalProvider {
                 MachineEntity entity = new MachineEntity();
                 List<F2CCpu> cpus = new LinkedList<>(); //cpu
                 List<F2CMemory> memories = new LinkedList<>(); //内存
-                List<F2CPhysicalDisk> disks = new LinkedList<>(); //磁盘
                 List<F2CPmNetworkCard> pmNetworkCards = new LinkedList<>(); //网卡
+                List<F2CPhysicalDisk> disks = new LinkedList<>(); //磁盘
 
                 //爬取基本数据
                 String url = overViewUrl + "sysDesc,nodeId";
@@ -74,7 +80,7 @@ public class DellMetalProvider extends AbstractMetalProvider {
                     entity.setSerialNo(jsonObject.getString("nodeId"));
                 }
 
-                //  获取 cpu 信息 header 需添加 X_SYSMGMT_OPTIMIZE 参数为 true
+                //获取 cpu 信息 header 需添加 X_SYSMGMT_OPTIMIZE 参数为 true
                 header.put("X_SYSMGMT_OPTIMIZE", "true");
                 String cpuResponse = HttpUtils.get(String.format(cpuUrl, request.getIp()), header);
                 net.sf.json.JSONObject jsonObjectCpu = net.sf.json.JSONObject.fromObject(cpuResponse);
@@ -115,20 +121,89 @@ public class DellMetalProvider extends AbstractMetalProvider {
                 entity.setCpus(cpus);
                 entity.setCpu(cpus.size());
 
+                //内存
+                String memoryResponse = HttpUtils.get(String.format(memoryUrl, request.getIp()), header);
+                net.sf.json.JSONObject jsonObjectMemory = net.sf.json.JSONObject.fromObject(memoryResponse);
+                net.sf.json.JSONObject DIMM = jsonObjectMemory.getJSONObject("DIMM");
+                Iterator memoryIt = DIMM.keys();
+                while (memoryIt.hasNext()) {
+                    net.sf.json.JSONObject memory = DIMM.getJSONObject((String) memoryIt.next()); //每个 memory 的信息
+                    if(memory.getInt("size") > 0){
+                        F2CMemory memoryItem = new F2CMemory();
+                        memoryItem.setMemModSize(String.valueOf(memory.getInt("size")));
+                        memoryItem.setMemModNum(memory.getString("name"));
+                        memoryItem.setMemModFrequency(String.valueOf(memory.getInt("speed")) + "MHz");
+                        memoryItem.setMemModPartNumber(memory.getString("device_description"));
+                        memories.add(memoryItem);
+                    }
+                }
+                entity.setMemories(memories);
+                entity.setMemory(memories.stream().mapToLong(m -> Long.valueOf(m.getMemModSize())).sum()); //计算现有内存总量
 
 
-                //:todo 内存
+                //网卡
+                String nicUrl = overViewUrl + "ndcmac";
+                String nicResponse = HttpUtils.get(String.format(nicUrl, request.getIp()), header);
+                net.sf.json.JSONObject jsonObjectNic = net.sf.json.JSONObject.fromObject(DataFormatUtil.XmlToJson(nicResponse)).getJSONObject("root");
+                if(jsonObjectNic.getString("status").equals("ok")){
+                    net.sf.json.JSONObject ndcmac = jsonObjectNic.getJSONObject("ndcmac");
+                    net.sf.json.JSONArray activemac = ndcmac.getJSONArray("activemac");
+                    for (int i=0; i<activemac.size(); i++){
+                        net.sf.json.JSONObject nic = activemac.getJSONObject(i); //每个 nic 的信息
+                        F2CPmNetworkCard networkCard = new F2CPmNetworkCard();
+                        networkCard.setMac(nic.getString("macaddr"));
+                        networkCard.setNumber(nic.getString("mactype") + i);
+                        pmNetworkCards.add(networkCard);
+                    }
+                }
+                entity.setPmNetworkCards(pmNetworkCards);
+
+                //磁盘
+                //先查询 pdisk 物理磁盘信息
+                String pdiskResponse = HttpUtils.get(String.format(pdiskUrl, request.getIp()), header);
+                net.sf.json.JSONObject jsonObjectPdisk = net.sf.json.JSONObject.fromObject(pdiskResponse);
+                net.sf.json.JSONObject PDisks = jsonObjectPdisk.getJSONObject("PDisks");
+                Iterator pdiskIt = PDisks.keys();
+                while (pdiskIt.hasNext()) {
+                    net.sf.json.JSONObject pdisk = PDisks.getJSONObject((String) pdiskIt.next()); //每个 pdisk 的信息
+                    if(pdisk.getString("led").contains("|C|")){
+                        F2CPhysicalDisk disk = new F2CPhysicalDisk();
+                        disk.setControllerId(0);
+                        disk.setEnclosureId(0);
+                        disk.setDrive(String.valueOf(pdisk.getInt("slot")));
+                        //容量格式处理
+                        String size = DiskUtil.SizeConverter.BTrim.convert(Float.parseFloat(pdisk.getString("size")));
+                        disk.setSize(DiskUtil.getStandSize(size.replace("GB", " GB")));
+                        //查询虚拟磁盘
+                        String vdiskParam = pdisk.getString("vdisks").substring((pdisk.getString("vdisks")).indexOf("pdisk=") + 6);//查询 vdisk 的参数
+                        vdiskParam = URLEncoder.encode(vdiskParam, "UTF-8"); //特殊字符转码
+                        String vdiskResponse = HttpUtils.get(String.format(vdiskUrl, request.getIp()) + "?pdisk=" + vdiskParam, header);
+                        net.sf.json.JSONObject jsonObjectVdisk = net.sf.json.JSONObject.fromObject(vdiskResponse);
+                        net.sf.json.JSONObject VDisks = jsonObjectVdisk.getJSONObject("VDisks");
+                        Iterator vdiskIt = VDisks.keys();
+                        while (vdiskIt.hasNext()) {
+                            net.sf.json.JSONObject vdisk = VDisks.getJSONObject((String) vdiskIt.next()); //每个 vdisk 的信息
+                            disk.setVirtualDisk(vdisk.getString("name"));
+                            if(disk.getVirtualDisk() != null){
+                                break;
+                            }
+                        }
+                        disk.setManufactor(pdisk.getString("manufacturer"));
+                        disk.setModel(pdisk.getString("product_id"));
+                        disk.setSn(pdisk.getString("sasAddress"));
+                        disks.add(disk);
+                    }
+                }
+                entity.setDisks(disks);
 
 
-                //:todo 网卡
 
-
-
-                return null;
+                logout(ipmiSnmpRequestStr);
+                return entity;
 
             } catch (Exception e) {
                 logout(ipmiSnmpRequestStr);
-                logger.error("插件获取物理机信息失败");
+                logger.error(String.format("获取物理机%s硬件信息失败！%s", request.getIp(), ExceptionDetailUtils.getStackTrace(e)));
             }
 
         }
