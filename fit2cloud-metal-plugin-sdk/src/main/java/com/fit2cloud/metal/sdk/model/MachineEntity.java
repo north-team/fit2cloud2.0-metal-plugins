@@ -1,10 +1,14 @@
 package com.fit2cloud.metal.sdk.model;
 
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+
 import java.util.List;
+import java.util.Map;
 
 public class MachineEntity {
     private String ip;
     private String bmcIp;
+    private String bmcMac;
     private String instanceUuid;
     //rackHD id
     private String nodeId;
@@ -22,6 +26,7 @@ public class MachineEntity {
     private List<String> ipArray;
     private String brand;
     private String model;
+    private HardwareEntity hardwareEntity;
     private String systemServiceTag;
     private String systemBiosVersion;
     private String procPwrPerf;
@@ -29,28 +34,22 @@ public class MachineEntity {
     private String nodeInterleave;
     //物理机序列号
     private String serialNo;
-    private List<F2CPhysicalDisk> disks;
-    private List<F2CCpu> cpus;
-    private List<F2CMemory> memories;
+    private List<F2CPmDisk> disks;
     private List<F2CPmNetworkCard> pmNetworkCards;
+    private List<F2CPmCpu> pmCpus;
+    private List<F2CPmMemory> pmMemories;
+
+    private Map<String, String> extendInfo;
+
+    public Map<String, String> getExtendInfo() {
+        return extendInfo;
+    }
+
+    public void setExtendInfo(Map<String, String> extendInfo) {
+        this.extendInfo = extendInfo;
+    }
 
     public MachineEntity() {
-    }
-
-    public List<F2CCpu> getCpus() {
-        return cpus;
-    }
-
-    public void setCpus(List<F2CCpu> cpus) {
-        this.cpus = cpus;
-    }
-
-    public List<F2CMemory> getMemories() {
-        return memories;
-    }
-
-    public void setMemories(List<F2CMemory> memories) {
-        this.memories = memories;
     }
 
     public List<F2CPmNetworkCard> getPmNetworkCards() {
@@ -189,6 +188,14 @@ public class MachineEntity {
         this.model = model;
     }
 
+    public HardwareEntity getHardwareEntity() {
+        return this.hardwareEntity;
+    }
+
+    public void setHardwareEntity(HardwareEntity hardwareEntity) {
+        this.hardwareEntity = hardwareEntity;
+    }
+
     public String getBmcIp() {
         return bmcIp;
     }
@@ -253,11 +260,40 @@ public class MachineEntity {
         this.serialNo = serialNo;
     }
 
-    public List<F2CPhysicalDisk> getDisks() {
+    public List<F2CPmDisk> getDisks() {
         return disks;
     }
 
-    public void setDisks(List<F2CPhysicalDisk> disks) {
+    public void setDisks(List<F2CPmDisk> disks) {
         this.disks = disks;
+    }
+
+    public String getBmcMac() {
+        return bmcMac;
+    }
+
+    public void setBmcMac(String bmcMac) {
+        this.bmcMac = bmcMac;
+    }
+
+    public List<F2CPmCpu> getPmCpus() {
+        return pmCpus;
+    }
+
+    public void setPmCpus(List<F2CPmCpu> pmCpus) {
+        this.pmCpus = pmCpus;
+    }
+
+    public List<F2CPmMemory> getPmMemories() {
+        return pmMemories;
+    }
+
+    public void setPmMemories(List<F2CPmMemory> pmMemories) {
+        this.pmMemories = pmMemories;
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
     }
 }

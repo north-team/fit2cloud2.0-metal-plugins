@@ -1,11 +1,17 @@
 package com.fit2cloud.metal.sdk.util;
 
+import com.fit2cloud.metal.sdk.model.F2CPmIp;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.util.SubnetUtils;
+import org.springframework.util.CollectionUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -50,30 +56,77 @@ public class IpUtil {
         return ips <= ipt && ipt <= ipe;
     }
 
-    static Pattern pattern = Pattern
+    public static F2CPmIp getConnectableIp(List<F2CPmIp> ips) {
+        if (CollectionUtils.isEmpty(ips)) {
+            return null;
+        }
+        //打乱列表顺序
+        Collections.shuffle(ips);
+        for (F2CPmIp ip : ips) {
+            try {
+                //返回不可达的IP
+                if (!InetAddress.getByName(ip.getIp()).isReachable(TIME_OUT)) {
+                    return ip;
+                }
+            } catch (IOException ignore) {
+                //忽略异常
+            }
+        }
+
+        return null;
+    }
+
+    static Pattern ipPattern = Pattern
             .compile("^((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5]"
                     + "|[*])\\.){3}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5]|[*])$");
 
     public static boolean checkIP(String str) {
-        return pattern.matcher(str).matches();
+        return ipPattern.matcher(str).matches();
     }
 
-    public static void main(String[] args) throws IOException {
-//        Process p = Runtime.getRuntime().exec("pwd");
-
-//        Process p = new ProcessBuilder("").start();
-//        Process p = new ProcessBuilder("ipmitool -I lanplus -H 47.107.47.38 -U admin -P admin power status").start();
-        Process p = Runtime.getRuntime().exec("ipmitool -I lanplus -H 47.107.47.38 -U admin -P admin power status");
-        InputStreamReader re = new InputStreamReader(p.getInputStream(), "utf-8");
-
-        BufferedReader b = new BufferedReader(re);
-        String line = null;
-        while ((line = b.readLine()) != null) {
-            System.out.println(line);
+    public static boolean ping(String ip) {
+        if (StringUtils.isAnyBlank(ip)) {
+            throw new RuntimeException("运行ping命令失败！参数非法！");
         }
-        p.getInputStream().close();
-        re.close();
-        b.close();
+        try {
+            InetAddress address = Inet4Address.getByName(ip);
+            return address.isReachable(1500);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+
+    /**
+     * 先使用icmp 如果不通则使用socket测试443端口，如果能通则返回true
+     * 南方中心宿主机禁止了icmp协议
+     *
+     * @param ip
+     * @return
+     */
+    public static boolean canConnect(String ip) {
+        if (StringUtils.isAnyBlank(ip)) {
+            throw new RuntimeException("运行ping命令失败！参数非法！");
+        }
+        Socket s = null;
+        try {
+            InetAddress address = Inet4Address.getByName(ip);
+            if (address.isReachable(1500)) return true;
+            s = new Socket();
+            s.connect(new InetSocketAddress(ip, 443));
+        } catch (Exception e) {
+            return false;
+        } finally {
+            if (s != null) {
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return true;
     }
 
 }
