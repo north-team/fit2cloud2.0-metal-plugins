@@ -165,13 +165,13 @@
 
     <repositories>
         <repository>
-            <id>central</id>
+            <id>one</id>
             <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
             <name>aliyun</name>
         </repository>
         <repository>
             <id>mvn</id>
-            <url>https://repo.opennms.org/maven2/</url>
+            <url>http://repo.opennms.org/maven2/</url>
         </repository>
     </repositories>
 
