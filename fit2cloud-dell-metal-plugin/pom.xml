@@ -37,11 +37,6 @@
             <version>1.1</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-            <version>1.1</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -142,6 +137,11 @@
 
     <!-- download artifacts from this repo -->
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <name>aliyun</name>
+        </repository>
         <repository>
             <id>fit2cloud-enterprise-release</id>
             <name>Fit2Cloud Enterprise Release</name>
