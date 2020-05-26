@@ -74,5 +74,10 @@
                 <enabled>true</enabled>
             </snapshots>
         </pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <name>aliyun</name>
+        </pluginRepository>
     </pluginRepositories>
 </project>
