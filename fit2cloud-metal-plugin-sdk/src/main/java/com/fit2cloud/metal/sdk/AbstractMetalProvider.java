@@ -179,7 +179,7 @@ public abstract class AbstractMetalProvider implements IMetalProvider {
             String commandResult = IPMIUtils.exeCommand(account, "power status");
 
             if (commandResult.contains(BareMetalConstants.PM_POWER_ON) || commandResult.contains("On")) {
-                IPMIUtils.exeCommand(account, "power reset");
+                IPMIUtils.exeCommand(account, "power reset soft");
             } else {
                 IPMIUtils.exeCommand(account, "power on");
             }
