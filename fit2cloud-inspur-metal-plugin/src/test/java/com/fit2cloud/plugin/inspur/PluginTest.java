@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Resource;
+
 public class PluginTest {
     private IPMISnmpRequest request;
     private IMetalProvider iMetalProvider;
@@ -13,7 +15,7 @@ public class PluginTest {
 
     @Before
     public void setP() {
-        request = new IPMISnmpRequest("149.129.105.194:4000", "admin", "Fit2cloud@2019");
+        request = new IPMISnmpRequest("xxx", "xxx", "xxx");
         request.setCommunity("public");
         request.setPort(161);
         iMetalProvider = new InspurMetalProvider();

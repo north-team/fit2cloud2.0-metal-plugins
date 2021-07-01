@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fit2cloud</groupId>
+    <groupId>com.fit2cloud.north.pro</groupId>
     <artifactId>fit2cloud-metal-plugin-sdk</artifactId>
-    <version>${fit2cloud.version}</version>
+    <version>2.0</version>
 
     <licenses>
         <license>
@@ -112,7 +112,7 @@
         <dependency>
             <groupId>org.snmp4j</groupId>
             <artifactId>snmp4j</artifactId>
-            <version>3.0.6</version>
+            <version>2.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>

@@ -18,10 +18,7 @@ public class PluginTest {
 
     @Before
     public void setP() {
-//        request = new IPMISnmpRequest("10.132.47.212", "admin", "admin");
-//        request = new IPMISnmpRequest("10.132.47.213", "kaijun", "Szse@ipmi307");
-//        request = new IPMISnmpRequest("10.132.47.213", "USERID", "Bo1701@sse");
-        request = new IPMISnmpRequest("10.132.47.213", "USERID", "PASSW0RD");
+        request = new IPMISnmpRequest("ww", "xx", "xx");
         request.setCommunity("public");
         request.setPort(161);
         iMetalProvider = new IBMMetalProvider();

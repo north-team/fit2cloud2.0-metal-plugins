@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.fit2cloud</groupId>
+    <groupId>com.fit2cloud.north.pro</groupId>
     <artifactId>fit2cloud-ibm-metal-plugin</artifactId>
     <version>${fit2cloud.version}</version>
 
@@ -22,9 +22,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.fit2cloud</groupId>
+            <groupId>com.fit2cloud.north.pro</groupId>
             <artifactId>fit2cloud-metal-plugin-sdk</artifactId>
-            <version>2.0</version>
+            <version>${fit2cloud.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>

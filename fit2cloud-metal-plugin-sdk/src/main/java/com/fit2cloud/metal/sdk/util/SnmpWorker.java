@@ -126,4 +126,10 @@ public class SnmpWorker implements Closeable {
             snmp.close();
         }
     }
+
+    public static void main(String[] args) throws IOException {
+        SnmpWorker snmpWorker = new SnmpWorker("192.168.1.120", "public" , 161);
+//        SnmpWorker snmpWorker = new SnmpWorker("192.168.1.250", "inspur@0531" , 161);
+        System.out.println(snmpWorker.walk("1.3.6.1.4.1.674"));
+    }
 }

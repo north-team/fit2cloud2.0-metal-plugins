@@ -14,12 +14,14 @@
         <module>fit2cloud-hp-metal-plugin</module>
         <module>fit2cloud-ibm-metal-plugin</module>
         <module>fit2cloud-huawei-metal-plugin</module>
+        <module>fit2cloud-zte-metal-plugin</module>
+        <module>fit2cloud-h3c-metal-plugin</module>
 
     </modules>
     <name>Fit2Cloud2.0 Metal Plugins</name>
 
     <properties>
-        <fit2cloud.version>2.0</fit2cloud.version>
+        <fit2cloud.version>2.0.0-pm-standard</fit2cloud.version>
     </properties>
 
     <!-- download artifacts from this repo -->

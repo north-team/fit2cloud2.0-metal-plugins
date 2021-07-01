@@ -66,6 +66,9 @@ public class InspurMetalProvider extends AbstractMetalProvider {
             JSONObject sessionObj = JSONObject.parseObject(getResponseJSONString(result)).getJSONArray("WEBVAR_STRUCTNAME_WEB_SESSION").getJSONObject(0);
             String token = sessionObj.getString("SESSION_COOKIE");
             String csrfToken = sessionObj.getString("CSRFTOKEN");
+            if ("Failure_Login_IPMI_Then_LDAP_then_Active_Directory_Radius".equalsIgnoreCase(token)) {
+                return PluginResult.error("");
+            }
             Map<String, String> headers = new HashMap();
             headers.put("Cookie", "SessionCookie=" + token);
             //新版固件会检查这个token老版的可能不需要

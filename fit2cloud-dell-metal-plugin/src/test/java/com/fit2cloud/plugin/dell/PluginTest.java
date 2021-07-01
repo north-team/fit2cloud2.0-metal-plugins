@@ -2,11 +2,15 @@ package com.fit2cloud.plugin.dell;
 
 import com.fit2cloud.metal.sdk.IMetalProvider;
 import com.fit2cloud.metal.sdk.model.request.IPMISnmpRequest;
+import com.fit2cloud.metal.sdk.util.SnmpWorker;
 import com.fit2cloud.plugin.dell.utils.IDrac7RestSpider;
 import com.fit2cloud.plugin.dell.utils.IDrac8RestSpider;
 import com.google.gson.Gson;
 import org.junit.Before;
 import org.junit.Test;
+import org.soulwing.snmp.SnmpWalker;
+
+import java.io.IOException;
 
 public class PluginTest {
     private IPMISnmpRequest request;
@@ -16,7 +20,6 @@ public class PluginTest {
     @Before
     public void setP() {
         request = new IPMISnmpRequest("xx", "root", "calvin");
-//        request = new IPMISnmpRequest("10.132.47.217", "root", "Fit2cloud@2019");
         request.setCommunity("public");
         request.setPort(161);
         iMetalProvider = new DellMetalProvider();
@@ -69,5 +72,11 @@ public class PluginTest {
             request = new IPMISnmpRequest("xx", "xx", "xx");
             System.out.println(gson.toJson(new IDrac7RestSpider().getMachineEntity(request.getHost(), request.getUserName(), request.getPwd())));
         }
+    }
+
+    @Test
+    public void testZte() throws IOException {
+        SnmpWorker s = new SnmpWorker("172.31.5.222", "zte_public", 161);
+        s.walk("");
     }
 }
